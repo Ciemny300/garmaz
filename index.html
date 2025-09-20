@@ -156,239 +156,254 @@
     © 2025 Zwariowany Garmaż
   </footer>
 
-  <script>
-    // === 1) KONFIGURACJA ===
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7s70xH32hvGyf81asg-gKRZkl7N9xUG_B_f74CVLX1uWzVF424Gvmm8Wa-V7LHwfQIIu0LCTtEJ-8/pub?gid=0&single=true&output=csv";
+<script>
+  // === 1) KONFIGURACJA ===
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7s70xH32hvGyf81asg-gKRZkl7N9xUG_B_f74CVLX1uWzVF424Gvmm8Wa-V7LHwfQIIu0LCTtEJ-8/pub?gid=0&single=true&output=csv";
 
-    // mapowanie nazw kolumn
-    const MAP = {
-      name:     ["nazwa","produkt","danie","pozycja","produkt "],
-      price:    ["cena","cena/kg","cena brutto","cena netto"],
-      category: ["kategoria","typ","segment"],
-      desc:     ["opis","opis dania","sklad","skład"],
-      image:    ["zdjęcie","zdjecie","image","img","foto","obraz"],
-      unit:     ["jednostka","jm","/kg","/szt","za","l","/l","litr"]
+  // mapowanie nazw kolumn
+  const MAP = {
+    name:     ["nazwa","produkt","danie","pozycja","produkt "],
+    price:    ["cena","cena/kg","cena brutto","cena netto"],
+    category: ["kategoria","typ","segment"],
+    desc:     ["opis","opis dania","sklad","skład"],
+    image:    ["zdjęcie","zdjecie","image","img","foto","obraz"],
+    unit:     ["jednostka","jm","/kg","/szt","za","l","/l","litr"]
+  };
+
+  // === 2) UTYLITIES ===
+  const lc = s => (s || "").toString().trim().toLowerCase();
+
+  // poprawione formatowanie ceny
+  function money(v){
+    const raw = (v ?? "").toString();
+    const num = parseFloat(raw.replace(/\s/g,"").replace(',', '.').replace(/[^\d.\-]/g,''));
+    return Number.isFinite(num)
+      ? num.toLocaleString("pl-PL",{minimumFractionDigits:2,maximumFractionDigits:2})
+      : raw;
+  }
+
+  // poprawione formatowanie jednostki
+  function formatUnit(uRaw){
+    const u = (uRaw || "").toString().trim();
+    if (!u) return "";
+    const norm = u.replace(/\s+/g," ").replace('.',',');
+
+    // jeżeli zawiera cyfrę (np. "0,5 kg", "500 ml", "8 szt")
+    if (/\d/.test(norm)) return " / " + norm;
+
+    const key = norm.toLowerCase();
+    const map = {
+      "kg":"kg","/kg":"kg",
+      "szt":"szt","/szt":"szt",
+      "porcja":"porcja",
+      "l":"L","/l":"L","litr":"L","litra":"L","litrów":"L"
+    };
+    return " / " + (map[key] || norm);
+  }
+
+  // CSV parser
+  function parseCSV(text){
+    const rows=[]; let cur=[]; let cell=""; let q=false;
+    for (let i=0;i<text.length;i++){
+      const c=text[i], n=text[i+1];
+      if (q){
+        if (c==='"' && n==='"'){ cell+='"'; i++; }
+        else if (c=== '"'){ q=false; }
+        else { cell+=c; }
+      } else {
+        if (c === '"'){ q=true; }
+        else if (c === ','){ cur.push(cell); cell=""; }
+        else if (c === '\n'){ cur.push(cell); rows.push(cur); cur=[]; cell=""; }
+        else if (c === '\r'){ /* ignore */ }
+        else { cell += c; }
+      }
+    }
+    if (cell.length || cur.length) { cur.push(cell); rows.push(cur); }
+    return rows;
+  }
+
+  function normalizeRows(headers, rows){
+    const hl = headers.map(h => lc(h));
+    const cellAt = (row, i) => Array.isArray(row) ? (row[i] ?? "") : (row[headers[i]] ?? "");
+    function pick(mapKeys, row){
+      for (let i=0;i<hl.length;i++){
+        if (MAP && MAP.name && lc(hl[i]) === lc(mapKeys)) return cellAt(row,i);
+        if (mapKeys.includes(hl[i])) return cellAt(row,i);
+      }
+      return "";
+    }
+
+    let items = rows.map(r => ({
+      name:     pick(MAP.name, r)     || cellAt(r,0),
+      price:    pick(MAP.price, r)    || cellAt(r,1),
+      category: pick(MAP.category, r) || "Menu",
+      desc:     pick(MAP.desc, r)     || cellAt(r,3),
+      image:    pick(MAP.image, r)    || cellAt(r,4),
+      unit:     pick(MAP.unit, r)     || cellAt(r,2) || "zł"
+    }));
+
+    return items.map(it => ({
+      name: (it.name ?? "").toString(),
+      price: (it.price ?? "").toString(),
+      category: it.category || "Menu",
+      desc: it.desc || "",
+      image: it.image || "",
+      unit: it.unit || "zł"
+    })).filter(x => x.name || x.price || x.desc);
+  }
+
+  function renderCats(items){
+    const cats = Array.from(new Set(items.map(i => i.category).filter(Boolean)));
+    const bar = document.getElementById("cats");
+    bar.innerHTML = "";
+    const mkBtn = (label) => {
+      const a = document.createElement("button");
+      a.className = "px-3 py-1.5 rounded-full border text-sm hover:border-blue-500 hover:text-blue-600";
+      a.dataset.cat = label;
+      a.textContent = label;
+      return a;
+    };
+    bar.appendChild(mkBtn("Wszystko"));
+    cats.forEach(c => bar.appendChild(mkBtn(c)));
+  }
+
+  function renderGrid(items){
+    const wrap = document.getElementById("grid");
+    const empty = document.getElementById("empty");
+    wrap.innerHTML = "";
+    if (!items.length){ empty.classList.remove("hidden"); return; }
+    empty.classList.add("hidden");
+
+    items.forEach(it => {
+      const card = document.createElement("article");
+      card.className = "bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden flex flex-col";
+      const imgWrap = document.createElement("div");
+      imgWrap.className = "h-40 bg-slate-100";
+      if (it.image){
+        const img = document.createElement("img");
+        img.src = it.image; img.alt = it.name;
+        img.className = "w-full h-40 object-cover";
+        imgWrap.appendChild(img);
+      } else {
+        imgWrap.innerHTML = '<div class="w-full h-40 grid place-items-center text-slate-400">Zdjęcie</div>';
+      }
+      card.appendChild(imgWrap);
+
+      const body = document.createElement("div");
+      body.className = "p-4 flex flex-col gap-2 grow";
+      const cat = document.createElement("span");
+      cat.className = "inline-block text-xs px-2 py-1 bg-slate-100 rounded-full w-fit";
+      cat.textContent = it.category || "Menu";
+      body.appendChild(cat);
+
+      const h3 = document.createElement("h3");
+      h3.className = "text-lg font-bold";
+      h3.textContent = it.name || "Pozycja";
+      body.appendChild(h3);
+
+      if (it.desc){
+        const p = document.createElement("p");
+        p.className = "text-sm text-slate-600 line-clamp-3";
+        p.textContent = it.desc;
+        body.appendChild(p);
+      }
+
+      const foot = document.createElement("div");
+      foot.className = "mt-auto pt-2 flex items-baseline justify-between";
+
+      const price = document.createElement("div");
+      price.className = "text-2xl font-extrabold text-blue-600";
+      if(it.price){
+        price.innerHTML = `<span>${money(it.price)} zł</span><span class="text-sm text-slate-500">${formatUnit(it.unit)}</span>`;
+      } else {
+        price.textContent = "—";
+      }
+      foot.appendChild(price);
+
+      const btn = document.createElement("button");
+      btn.className = "text-sm px-3 py-2 rounded-xl border border-slate-300 hover:border-blue-500 hover:text-blue-600";
+      btn.textContent = "Zapytaj o ofertę";
+      btn.addEventListener("click", () => location.hash = "#kontakt");
+      foot.appendChild(btn);
+      body.appendChild(foot);
+
+      card.appendChild(body);
+      wrap.appendChild(card);
+    });
+  }
+
+  function setupFilters(allItems){
+    const search = document.getElementById("search");
+    const cats = document.getElementById("cats");
+
+    function apply(){
+      const q = (search.value || "").toLowerCase();
+      const activeCatBtn = cats.querySelector("button.active");
+      const cat = activeCatBtn ? activeCatBtn.dataset.cat : "Wszystko";
+      const filtered = allItems.filter(i => {
+        const inCat = cat === "Wszystko" || (i.category||"").toLowerCase() === cat.toLowerCase();
+        const inText = !q || [i.name, i.desc, i.category].some(x => (x||"").toLowerCase().includes(q));
+        return inCat && inText;
+      });
+      renderGrid(filtered);
+    }
+
+    cats.addEventListener("click", (e) => {
+      if (e.target.tagName !== "BUTTON") return;
+      cats.querySelectorAll("button").forEach(b => b.classList.remove("active","border-blue-500","text-blue-600","bg-blue-50"));
+      e.target.classList.add("active","border-blue-500","text-blue-600","bg-blue-50");
+      apply();
+    });
+    search.addEventListener("input", apply);
+
+    const first = cats.querySelector("button");
+    if (first){ first.classList.add("active","border-blue-500","text-blue-600","bg-blue-50"); }
+    apply();
+  }
+
+  // === 3) START ===
+  (async function init(){
+    const loader = document.getElementById("loader");
+    const empty  = document.getElementById("empty");
+
+    const fetchWithTimeout = async (url, t=12000) => {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort("timeout"), t);
+      try {
+        return await fetch(url, { cache: "no-store", signal: ctrl.signal });
+      } finally {
+        clearTimeout(id);
+      }
     };
 
-    // === 2) UTYLITIES ===
-    const lc = s => (s || "").toString().trim().toLowerCase();
-    function money(v) {
-      const num = typeof v === "number" ? v : parseFloat(String(v).replace(',', '.').replace(/[^\d\.,-]/g,''));
-      return Number.isFinite(num) ? num.toLocaleString("pl-PL", {minimumFractionDigits: 2, maximumFractionDigits: 2}) : (v || "");
-    }
-    function inMap(label, keys){ label = lc(label); return keys.findIndex(k => label === lc(k)) !== -1; }
+    try {
+      const res = await fetchWithTimeout(CSV_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      const text = await res.text();
 
-    // Jednostki → ładny zapis
-    function displayUnit(uRaw){
-      const u = String(uRaw || "").trim().toLowerCase();
-      if (!u) return "";
-      if (u.includes("zł")) return " zł";
-      if (u === "/szt" || u === "szt") return " /szt";
-      if (u === "/kg"  || u === "kg")  return " /kg";
-      if (u === "/l" || u === "l" || u === "litr" || u === "litrów" || u === "litra" || u === "litr(y)") return " /L";
-      return " " + (uRaw || ""); // fallback
-    }
+      const rows = parseCSV(text).filter(r => r.length && r.join("").trim() !== "");
+      const headers = rows.shift() || [];
+      const items = normalizeRows(headers, rows);
 
-    // CSV parser
-    function parseCSV(text){
-      const rows=[]; let cur=[]; let cell=""; let q=false;
-      for (let i=0;i<text.length;i++){
-        const c=text[i], n=text[i+1];
-        if (q){
-          if (c==='"' && n==='"'){ cell+='"'; i++; }
-          else if (c=== '"'){ q=false; }
-          else { cell+=c; }
-        } else {
-          if (c === '"'){ q=true; }
-          else if (c === ','){ cur.push(cell); cell=""; }
-          else if (c === '\n'){ cur.push(cell); rows.push(cur); cur=[]; cell=""; }
-          else if (c === '\r'){ /* ignore */ }
-          else { cell += c; }
-        }
-      }
-      if (cell.length || cur.length) { cur.push(cell); rows.push(cur); }
-      return rows;
-    }
-
-    // normalizeRows — działa dla wierszy jako tablice i obiekty
-    function normalizeRows(headers, rows){
-      const hl = headers.map(h => lc(h));
-      const cellAt = (row, i) => Array.isArray(row) ? (row[i] ?? "") : (row[headers[i]] ?? "");
-      function pick(mapKeys, row){
-        for (let i=0;i<hl.length;i++){
-          if (inMap(hl[i], mapKeys)) return cellAt(row, i);
-        }
-        return "";
+      if (!items.length) {
+        document.getElementById("grid").innerHTML = "";
+        empty.classList.remove("hidden");
+        empty.textContent = "Brak pozycji do wyświetlenia. Odczytane nagłówki: " + headers.join(", ");
+        return;
       }
 
-      let items = rows.map(r => ({
-        name:     pick(MAP.name, r)     || cellAt(r,0),
-        price:    pick(MAP.price, r)    || cellAt(r,1),
-        category: pick(MAP.category, r) || "Menu",
-        desc:     pick(MAP.desc, r)     || cellAt(r,3),
-        image:    pick(MAP.image, r)    || cellAt(r,4),
-        unit:     pick(MAP.unit, r)     || cellAt(r,2) || "zł"
-      }));
-
-      return items.map(it => ({
-        name: (it.name ?? "").toString(),
-        price: (it.price ?? "").toString(),
-        category: it.category || "Menu",
-        desc: it.desc || "",
-        image: it.image || "",
-        unit: it.unit || "zł"
-      })).filter(x => x.name || x.price || x.desc);
+      renderCats(items);
+      setupFilters(items);
+    } catch (err) {
+      console.error("Błąd ładowania danych:", err);
+      document.getElementById("loader").innerHTML =
+        '<div class="col-span-full text-center text-slate-500">Nie udało się pobrać CSV (sieć/CORS/timeout). Sprawdź publikację lub odśwież stronę.</div>';
+    } finally {
+      loader.classList.add("hidden");
     }
+  })();
+</script>
 
-    // Render znaczników kategorii
-    function renderCats(items){
-      const cats = Array.from(new Set(items.map(i => i.category).filter(Boolean)));
-      const bar = document.getElementById("cats");
-      bar.innerHTML = "";
-      const mkBtn = (label) => {
-        const a = document.createElement("button");
-        a.className = "px-3 py-1.5 rounded-full border text-sm hover:border-blue-500 hover:text-blue-600";
-        a.dataset.cat = label;
-        a.textContent = label;
-        return a;
-      };
-      bar.appendChild(mkBtn("Wszystko"));
-      cats.forEach(c => bar.appendChild(mkBtn(c)));
-    }
-
-    // Render kart
-    function renderGrid(items){
-      const wrap = document.getElementById("grid");
-      const empty = document.getElementById("empty");
-      wrap.innerHTML = "";
-      if (!items.length){ empty.classList.remove("hidden"); return; }
-      empty.classList.add("hidden");
-
-      items.forEach(it => {
-        const card = document.createElement("article");
-        card.className = "bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden flex flex-col";
-        const imgWrap = document.createElement("div");
-        imgWrap.className = "h-40 bg-slate-100";
-        if (it.image){
-          const img = document.createElement("img");
-          img.src = it.image; img.alt = it.name;
-          img.className = "w-full h-40 object-cover";
-          imgWrap.appendChild(img);
-        } else {
-          imgWrap.innerHTML = '<div class="w-full h-40 grid place-items-center text-slate-400">Zdjęcie</div>';
-        }
-        card.appendChild(imgWrap);
-
-        const body = document.createElement("div");
-        body.className = "p-4 flex flex-col gap-2 grow";
-        const cat = document.createElement("span");
-        cat.className = "inline-block text-xs px-2 py-1 bg-slate-100 rounded-full w-fit";
-        cat.textContent = it.category || "Menu";
-        body.appendChild(cat);
-
-        const h3 = document.createElement("h3");
-        h3.className = "text-lg font-bold";
-        h3.textContent = it.name || "Pozycja";
-        body.appendChild(h3);
-
-        if (it.desc){
-          const p = document.createElement("p");
-          p.className = "text-sm text-slate-600 line-clamp-3";
-          p.textContent = it.desc;
-          body.appendChild(p);
-        }
-
-        const foot = document.createElement("div");
-        foot.className = "mt-auto pt-2 flex items-baseline justify-between";
-        const price = document.createElement("div");
-        price.className = "text-2xl font-extrabold text-blue-600";
-        price.textContent = it.price ? `${money(it.price)}${displayUnit(it.unit)}` : "—";
-        foot.appendChild(price);
-        const btn = document.createElement("button");
-        btn.className = "text-sm px-3 py-2 rounded-xl border border-slate-300 hover:border-blue-500 hover:text-blue-600";
-        btn.textContent = "Zapytaj o ofertę";
-        btn.addEventListener("click", () => location.hash = "#kontakt");
-        foot.appendChild(btn);
-        body.appendChild(foot);
-
-        card.appendChild(body);
-        wrap.appendChild(card);
-      });
-    }
-
-    // Filtrowanie
-    function setupFilters(allItems){
-      const search = document.getElementById("search");
-      const cats = document.getElementById("cats");
-
-      function apply(){
-        const q = (search.value || "").toLowerCase();
-        const activeCatBtn = cats.querySelector("button.active");
-        const cat = activeCatBtn ? activeCatBtn.dataset.cat : "Wszystko";
-        const filtered = allItems.filter(i => {
-          const inCat = cat === "Wszystko" || (i.category||"").toLowerCase() === cat.toLowerCase();
-          const inText = !q || [i.name, i.desc, i.category].some(x => (x||"").toLowerCase().includes(q));
-          return inCat && inText;
-        });
-        renderGrid(filtered);
-      }
-
-      cats.addEventListener("click", (e) => {
-        if (e.target.tagName !== "BUTTON") return;
-        cats.querySelectorAll("button").forEach(b => b.classList.remove("active","border-blue-500","text-blue-600","bg-blue-50"));
-        e.target.classList.add("active","border-blue-500","text-blue-600","bg-blue-50");
-        apply();
-      });
-      search.addEventListener("input", apply);
-
-      const first = cats.querySelector("button");
-      if (first){ first.classList.add("active","border-blue-500","text-blue-600","bg-blue-50"); }
-      apply();
-    }
-
-    // === 3) START ===
-    (async function init(){
-      const loader = document.getElementById("loader");
-      const empty  = document.getElementById("empty");
-
-      // fetch z timeoutem (żeby nigdy nie „mieliło”)
-      const fetchWithTimeout = async (url, t=12000) => {
-        const ctrl = new AbortController();
-        const id = setTimeout(() => ctrl.abort("timeout"), t);
-        try {
-          return await fetch(url, { cache: "no-store", signal: ctrl.signal });
-        } finally {
-          clearTimeout(id);
-        }
-      };
-
-      try {
-        const res = await fetchWithTimeout(CSV_URL);
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-        const text = await res.text();
-
-        const rows = parseCSV(text).filter(r => r.length && r.join("").trim() !== "");
-        const headers = rows.shift() || [];
-        const items = normalizeRows(headers, rows);
-
-        if (!items.length) {
-          document.getElementById("grid").innerHTML = "";
-          empty.classList.remove("hidden");
-          empty.textContent = "Brak pozycji do wyświetlenia. Odczytane nagłówki: " + headers.join(", ");
-          return;
-        }
-
-        renderCats(items);
-        setupFilters(items);
-      } catch (err) {
-        console.error("Błąd ładowania danych:", err);
-        document.getElementById("loader").innerHTML =
-          '<div class="col-span-full text-center text-slate-500">Nie udało się pobrać CSV (sieć/CORS/timeout). Sprawdź publikację lub odśwież stronę.</div>';
-      } finally {
-        loader.classList.add("hidden"); // zawsze chowaj loader
-      }
-    })();
-  </script>
 <!-- FB Floating Button -->
 <a href="https://www.facebook.com/zwariowanygarmaz123gmail"
    onclick="window.open(this.href, 'popupfb', 'width=800,height=600'); return false;"
