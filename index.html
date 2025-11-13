@@ -126,6 +126,23 @@
   align-items: center;
   height: 100%;
   padding-inline: 1rem;
+.hero-banner {
+  position: absolute;
+  top: 40px;                 /* dystans od góry hero */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(90%, 800px);    /* szerokość responsywna */
+  height: 60px;              /* wysokość banera */
+  
+  background: #ffffff15;     /* półprzezroczysty glass */
+  backdrop-filter: blur(8px) saturate(140%);
+  border: 1px solid #ffffff2a;
+  border-radius: 18px;
+
+  z-index: 5;                /* nad wideo */
+}
+
 }
 
 
@@ -184,34 +201,41 @@
   .footer a{color:var(--ink);opacity:.9;text-decoration:none}
 @media (max-width: 768px) {
   .topbar {
-    height: auto;              /* brak sztywnego 72px */
+    height: auto;              
     padding-block: 8px;
   }
 
   .topbar .container {
-    flex-wrap: wrap;           /* pozwól zawijać logo + menu w 2 rzędy */
+    flex-wrap: wrap;           
     gap: 8px;
   }
 
   .nav {
     width: 100%;
     margin-left: 0;
-    height: auto;              /* ważne – bez 72px */
+    height: auto;             
     flex-wrap: wrap;
     justify-content: flex-start;
   }
 
   .nav a {
-    height: auto;              /* zdejmujemy 100%/72px */
+    height: auto;              
     padding: 4px 0;
   }
 
   .nav .btn,
   .nav .btn-cta {
-    height: auto;              /* przycisk też elastyczny */
+    height: auto;              
     padding: 0.6rem 0.9rem;
   }
 }
+.brand-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 </style>
 </head>
 <body>
@@ -220,7 +244,7 @@
 <header id="topbar" class="topbar" role="banner" aria-label="Górny pasek nawigacji">
   <div class="container">
     <a href="#start" class="brand">
-      <span class="brand-logo">👑</span>
+<img src="https://i.imgur.com/pB6UBEj.jpeg" alt="Król Kebab z Tendoora" class="brand-logo-img">
       <span>Król Kebab z Tendoora</span>
     </a>
     <nav class="nav" aria-label="Główne">
@@ -236,6 +260,7 @@
 <!-- HERO -->
 <section id="start" class="hero" aria-label="Hero z wideo">
   <div class="video-bg">
+<div class="hero-banner"></div>
     <!-- PODMIANA NA WIDEO:
          <video src="/assets/hero.mp4" autoplay muted loop playsinline></video>
          (bez dźwięku, w pętli, responsywnie) -->
@@ -379,6 +404,7 @@
       }
     });
   });
+
 </script>
 </body>
 </html>
