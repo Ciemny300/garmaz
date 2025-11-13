@@ -1,420 +1,354 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zwariowany Garmaż – Catering dla firm</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.75); }
-    .shadow-soft { box-shadow: 0 10px 30px rgba(2,6,23,0.08); }
-    .skeleton { animation: pulse 1.2s ease-in-out infinite; background: linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 37%,#f3f4f6 63%); background-size: 400% 100%; }
-    @keyframes pulse { 0%{background-position:100% 50%} 100%{background-position:0 50%} }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Król Kebab z Tendoora — Białystok Centrum</title>
+<meta name="description" content="Król Kebab z Tendoora, Białystok Centrum. Mięso z pieca tandoor, chrupiące pieczywo, autorskie sosy. Codziennie 11:00–02:00.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#101010">
+<meta property="og:title" content="Król Kebab z Tendoora — Białystok Centrum">
+<meta property="og:description" content="Oryginalny kebab z pieca tandoor. Otwarte 11–02.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://krolkebabztandoora.pl/ogimage.jpg">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Restaurant",
+  "name":"Król Kebab z Tendoora",
+  "servesCuisine":["Kebab","Tandoor","Street Food"],
+  "address":{"@type":"PostalAddress","streetAddress":"ul. Kościuszki 32/3","addressLocality":"Białystok","addressCountry":"PL"},
+  "telephone":"+48 669 990 099",
+  "openingHours":["Mo-Su 11:00-02:00"],
+  "url":"https://krolkebabztandoora.pl/",
+  "priceRange":"PLN",
+  "sameAs":["https://www.facebook.com/kebabkingbstok"]
+}
+</script>
+
+<style>
+  /* ====== Design tokens (modern, minimal) ====== */
+  :root{
+    --bg:#0f0f10;         
+    --paper:#141416;       
+    --ink:#e9e9ea;        
+    --muted:#aaaaaf;       
+    --brand:#c21e1e;       
+    --gold:#f0d08a;        
+    --radius:16px;
+    --soft-shadow:0 10px 30px rgba(0,0,0,.35);
+    --glass:rgba(20,20,22,.55);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,#0e0e10 0%, #141418 60%, #101012 100%);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  img{max-width:100%;display:block}
+
+  .container{width:min(1200px,92%);margin-inline:auto}
+  .section{padding:clamp(48px,8vw,100px) 0}
+  .section-tight{padding:clamp(28px,5vw,56px) 0}
+
+  h1,h2,h3{margin:0 0 .6rem;font-weight:800;letter-spacing:.2px}
+  h1{font-size:clamp(34px,6vw,72px);line-height:1.05}
+  h2{font-size:clamp(24px,3.2vw,40px)}
+  h3{font-size:clamp(18px,2vw,22px);opacity:.95}
+  p{margin:.4rem 0 1.1rem;color:var(--muted)}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:.6rem;
+    padding:.9rem 1.2rem;border-radius:12px;border:1px solid #ffffff1a;
+    background:#ffffff07;color:var(--ink);text-decoration:none;font-weight:700;
+    backdrop-filter:saturate(140%) blur(6px);transition:.2s ease;will-change:transform,box-shadow
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:var(--soft-shadow)}
+  .btn-cta{background:var(--brand);border-color:transparent}
+  .btn-ghost{background:transparent;border-color:#ffffff2a}
+
+  .grid{display:grid;gap:clamp(16px,3vw,28px)}
+  .two{grid-template-columns:1.2fr 1fr}
+  .three{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:960px){.two,.three{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--paper);
+    border:1px solid #ffffff10;border-radius:var(--radius);
+    box-shadow:var(--soft-shadow);overflow:hidden
+  }
+
+  
+  .topbar{
+    position:fixed;inset:0 0 auto 0;height:72px;display:flex;align-items:center;
+    transform:translateY(-100%);transition:transform .45s ease, backdrop-filter .3s ease;
+    z-index:20;background:var(--glass);border-bottom:1px solid #ffffff15;
+    backdrop-filter:saturate(160%) blur(10px)
+  }
+  .topbar.stuck{transform:translateY(0)}
+  .topbar .container{display:flex;align-items:center;gap:18px}
+  .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--ink);font-weight:900}
+  .brand-logo{width:28px;height:28px;flex:0 0 28px;border-radius:8px;background:linear-gradient(145deg,#8c1414,#e52d2d);display:grid;place-items:center;color:var(--gold);font-size:14px;font-weight:900}
+ .nav {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  height: 72px; /* wysokość topbaru dla wyrównania */
+}
+
+/* Linki w menu */
+.nav a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  opacity: .92;
+}
+
+.nav a:hover {
+  opacity: 1;
+}
+
+/* Przycisk w topbarze też trzeba wyrównać */
+.nav .btn,
+.nav .btn-cta {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: 1rem;
+}
+
+
+  
+  .hero{position:relative;min-height:92vh;display:grid;place-items:center}
+  .video-bg{position:absolute;inset:0;overflow:hidden}
+  .video-bg img,.video-bg video{width:100%;height:100%;object-fit:cover;filter:brightness(.4) contrast(1.05)}
+  .hero-content{
+    position:relative;text-align:center;max-width:980px;margin-inline:auto;
+    padding:clamp(18px,4vw,30px);
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.5rem .8rem;border-radius:999px;background:#ffffff12;border:1px solid #ffffff2a;
+    font-weight:700;color:#fff;margin-bottom:.7rem
+  }
+  .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:clamp(14px,2vw,20px)}
+  .scroll-cue{
+    position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+    width:40px;height:40px;border-radius:999px;border:1px solid #ffffff3a;color:#fff;background:#0000;cursor:pointer
+  }
+
+
+  .photo img{aspect-ratio:4/3;object-fit:cover}
+  .bullet li{margin:.2rem 0}
+  .bullet li::marker{content:'— ';color:var(--gold)}
+
+
+  .offer .card img{aspect-ratio:4/3;object-fit:cover}
+  .offer .card .pad{padding:14px 16px}
+
+
+  .promo-chip{
+    background:#ffffff0e;border:1px solid #ffffff1f;border-radius:14px;padding:12px 14px
+  }
+
+
+  .contact-card{padding:18px}
+ .map{
+  border:1px solid #ffffff10;
+  border-radius:var(--radius);
+  overflow:hidden;
+  /* bez backgroundu i tekstu SVG */
+}
+
+.map iframe{
+  width:100%;
+  height:100%;
+  min-height:280px;
+  display:block;
+}
+
+ 
+  .footer{border-top:1px solid #ffffff12}
+  .footer .container{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 0;flex-wrap:wrap}
+  .footer a{color:var(--ink);opacity:.9;text-decoration:none}
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-      <div class="w-12 h-12 rounded-xl overflow-hidden">
-  <img src="https://i.imgur.com/46GgLPq.png" alt="Zwariowany Garmaż" class="w-full h-full object-contain">
-</div>
 
-        <div>
-          <div class="font-extrabold tracking-tight">Zwariowany Garmaż</div>
-          <div class="text-xs text-slate-500 -mt-0.5">Catering dla firm</div>
-        </div>
-      </div>
-      <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#menu" class="hover:text-blue-600">Menu</a>
-        <a href="#dlaczego" class="hover:text-blue-600">Dlaczego my</a>
-        <a href="#kontakt" class="hover:text-blue-600">Kontakt</a>
-      </nav>
-      <a href="#kontakt" class="hidden md:inline-flex bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-soft">Zamów dla firmy</a>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="relative overflow-hidden">
-    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-    <div class="max-w-7xl mx-auto px-4 py-16 md:py-24 text-white">
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">
-            Smak, który pokocha <span class="text-blue-400">całe biuro</span>
-          </h1>
-          <p class="mt-5 text-lg text-slate-300">
-            Od codziennych lunchy po konferencje. Elastyczne menu, szybka dostawa, przejrzyste ceny.
-            Zjedź niżej i przekonaj się sam.
-          </p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#menu" class="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl font-semibold shadow-soft">Zobacz menu</a>
-            <a href="#kontakt" class="bg-white/10 hover:bg-white/20 px-5 py-3 rounded-xl font-semibold">Kontakt</a>
-          </div>
-        </div>
-        <div class="glass rounded-3xl p-6 shadow-soft">
-  <div class="grid grid-cols-2 gap-4">
-    <img src="https://scontent.fqyy1-1.fna.fbcdn.net/v/t39.30808-6/484185933_3681838648618238_7549851379564282708_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=FqDd6-I-6YkQ7kNvwEKt9qt&_nc_oc=AdnhhQR-3CWFsJ6MiDq2D2tG5OtNOxPZz03vqynWk6k7AwXuuTYlZoxyBw69AaU1_0g&_nc_zt=23&_nc_ht=scontent.fqyy1-1.fna&_nc_gid=tMZedkl1yQOu4lYw8cS5XQ&oh=00_AfZVvUuMEIFs0VKa4J0epRaY88lye_fNAMejUSe9KxeiYA&oe=68CB7F93" alt="Pierogi" class="h-28 w-full rounded-2xl object-cover">
-
-    <img src="https://scontent.fqyy1-1.fna.fbcdn.net/v/t1.6435-9/200687108_2479265005542281_8213543658877431030_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=YakTz58UMeYQ7kNvwGQt0UE&_nc_oc=Adl5GZKNJeQLxAgJU6-hE5t8hI0eLA-VnS_ZeIQqsVyp3E5idcte2tGENSQQxOS5hCQ&_nc_zt=23&_nc_ht=scontent.fqyy1-1.fna&_nc_gid=BqjPxTDGQ8S0dBptgEDQlQ&oh=00_AfbiqtpCVUJs8rvKJyz-endVU3E1MBmwAnK5Y4ZQ9sQ3Vw&oe=68ECFAA8" class="h-28 w-full rounded-2xl object-cover">
-
-    <img src="https://scontent.fqyy1-1.fna.fbcdn.net/v/t1.6435-9/148147781_2367803970021719_1071372994617029457_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=wKM9-NojK_oQ7kNvwEJxMoi&_nc_oc=Adn9GWBmd4ooaMY92wnSTqHFxz8M9e2RsLftuwc7ji87XdhEZnp6cWCIvtHP3NpXtkw&_nc_zt=23&_nc_ht=scontent.fqyy1-1.fna&_nc_gid=5YUeIaYeyDd5f1Wqu5LnEQ&oh=00_AfaXRxgc3GQJsucqiwO6PhGcdwM7bNYVq_GPdJSIarNc_Q&oe=68ECF236" alt="Sałatka" class="h-28 w-full rounded-2xl object-cover">
-    <img src="https://poprostupycha.com.pl/wp-content/uploads/2018/12/pierogi-ruskie_7.jpg" alt="Zupa" class="h-28 w-full rounded-2xl object-cover">
+<header id="topbar" class="topbar" role="banner" aria-label="Górny pasek nawigacji">
+  <div class="container">
+    <a href="#start" class="brand">
+      <span class="brand-logo">👑</span>
+      <span>Król Kebab z Tendoora</span>
+    </a>
+    <nav class="nav" aria-label="Główne">
+      <a href="#o-nas">O nas</a>
+       <a href="/menu.html">Oferta</a>
+      <a href="#promocje">Promocje</a>
+      <a href="#kontakt">Kontakt</a>
+      <a class="btn btn-cta" href="https://google.com/" rel="noopener">Zamów teraz</a>
+    </nav>
   </div>
-  <p class="text-slate-700 text-sm mt-4">Podgląd zamówień firmowych</p>
-</div>
+</header>
 
-      </div>
+<!-- HERO -->
+<section id="start" class="hero" aria-label="Hero z wideo">
+  <div class="video-bg">
+    <!-- PODMIANA NA WIDEO:
+         <video src="/assets/hero.mp4" autoplay muted loop playsinline></video>
+         (bez dźwięku, w pętli, responsywnie) -->
+    <img alt="Tło wideo (placeholder)" width="1920" height="1080"
+         src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23131316'/><stop offset='100%' stop-color='%23202022'/></linearGradient></defs><rect width='1600' height='900' fill='url(%23g)'/><g fill='%23f0d08a' font-family='Georgia, serif'><text x='50%' y='48%' text-anchor='middle' font-size='64'>Król Kebab z Tendoora</text><text x='50%' y='58%' text-anchor='middle' font-size='24' fill='%23ddd'>TUTAJ BĘDZIE WIDEO W TLE</text></g></svg>">
+  </div>
+
+  <div class="hero-content container">
+ 
+    <h1>Oryginalny smak z&nbsp;pieca tandoor.</h1>
+    <div class="hero-cta">
+      <a class="btn btn-cta" href="tel:+48669990099">Zadzwoń</a>
+      <a class="btn btn-ghost" target="_blank" rel="noopener"
+         href="https://maps.app.goo.gl/vCMom3WEL8rpvWED9">Nawiguj</a>
+      <a class="btn" href="https://pyszne.pl" rel="noopener">Zamów teraz</a>
     </div>
-  <section id="dlaczego" class="py-20 bg-slate-50">
-  <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 text-center">
-      Co wyróżnia nasz catering
-    </h2>
+  </div>
 
-    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- 1 -->
-      <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 text-center">
-        <div class="text-4xl mb-3">🍲</div>
-        <h3 class="font-bold">Domowe smaki</h3>
-        <p class="text-slate-600 text-sm mt-2">Tradycyjne receptury, zero gotowców i półproduktów.</p>
-      </div>
+  <button class="scroll-cue" aria-label="Przewiń w dół"
+          onclick="document.querySelector('#o-nas').scrollIntoView({behavior:'smooth'});">↓</button>
+</section>
 
-      <!-- 2 -->
-      <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 text-center">
-        <div class="text-4xl mb-3">🚚</div>
-        <h3 class="font-bold">Szybka dostawa</h3>
-        <p class="text-slate-600 text-sm mt-2">Dowozy prosto do biura – gorące i punktualnie.</p>
-      </div>
-
-      <!-- 3 -->
-      <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 text-center">
-        <div class="text-4xl mb-3">🥗</div>
-        <h3 class="font-bold">Opcje dla każdego</h3>
-        <p class="text-slate-600 text-sm mt-2">Wege, fit i bezglutenowe warianty w standardzie.</p>
-      </div>
-
-      <!-- 4 -->
-      <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 text-center">
-        <div class="text-4xl mb-3">📊</div>
-        <h3 class="font-bold">Elastyczne rozliczenia</h3>
-        <p class="text-slate-600 text-sm mt-2">Faktury zbiorcze i jasne zasady współpracy.</p>
-      </div>
+<!-- O NAS -->
+<section id="o-nas" class="section">
+  <div class="container grid two">
+    <div>
+      <h2>Twój król wśród kebabów.</h2>
+      <p>Tendoora to kebab prosto z ognia. Mięso soczyste, skórka przypieczona, smak bez udawania. Tylko to, co naprawdę robi robotę.</p>
+<ul style="list-style-type:square">
+        <li>Mięso robione na miejscu</li>
+        <li>Sosy autorskie (łagodny, ostry, czosnkowy, (więcej dopiszę)</li>
+        <li>Porcje, które serio sycą</li>
+      </ul>
+    </div>
+    <div class="card photo" aria-hidden="true">
+      <img alt="" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'><rect width='800' height='600' fill='%23141416'/><text x='50%' y='52%' text-anchor='middle' font-size='24' fill='%23f0d08a' font-family='Arial'>Zdjęcie1</text></svg>">
     </div>
   </div>
 </section>
 
-
-
-  <!-- MENU -->
-  <section id="menu" class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Menu i cennik</h2>
-          <p class="text-slate-500 mt-2">Podane ceny są cenami netto.</p>
-          <p class="text-slate-500 mt-2">Uwaga, ceny mogą ulec zmianie. Stan cen na 19.09.2025r.</p>
+<!-- OFERTA (przebitki) -->
+<section id="oferta" class="section-tight">
+  <div class="container">
+    <h2>Co serwujemy</h2>
+    <p>Na szybko trzy klasyki. Pełna karta tutaj: (odnośnik do menu).</p>
+    <div class="grid three offer">
+      <article class="card">
+        <img alt="Kebab klasyczny" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'><rect width='800' height='600' fill='%23121214'/><text x='50%' y='52%' text-anchor='middle' font-size='24' fill='%23f0d08a' font-family='Arial'>Kebab klasyczny</text></svg>">
+        <div class="pad">
+          <h3>Kebab klasyczny</h3>
+          <p>Opis1.</p>
         </div>
-        <div class="flex flex-wrap gap-3 items-center">
-          <input id="search" placeholder="Szukaj dania..." class="w-64 max-w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <div id="cats" class="flex flex-wrap gap-2"></div>
+      </article>
+      <article class="card">
+        <img alt="Box z frytkami" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'><rect width='800' height='600' fill='%23121214'/><text x='50%' y='52%' text-anchor='middle' font-size='24' fill='%23f0d08a' font-family='Arial'>Box z frytkami</text></svg>">
+        <div class="pad">
+          <h3>Box z frytkami</h3>
+          <p>Opis2.</p>
         </div>
-      </div>
+      </article>
+      <article class="card">
+        <img alt="Tendoora Special" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'><rect width='800' height='600' fill='%23121214'/><text x='50%' y='52%' text-anchor='middle' font-size='24' fill='%23f0d08a' font-family='Arial'>Tendoora Special</text></svg>">
+        <div class="pad">
+          <h3>Tendoora Special</h3>
+          <p>Opis3.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
 
-      <div id="grid" class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+<!-- PROMOCJE (chipsy) -->
+<section id="promocje" class="section">
+  <div class="container">
+    <h2>Promocje</h2>
+    <div class="grid" style="grid-template-columns:repeat( auto-fit, minmax(240px,1fr) );">
+      <div class="promo-chip">🎓 <strong>Student -10%</strong> • pn–czw, 11:00–16:00, za okazaniem legitymacji</div>
+      <div class="promo-chip">2️⃣ <strong>Promocja2</strong></div>
+    </div>
+  </div>
+</section>
 
-      <div id="empty" class="hidden text-center py-12 text-slate-500">
-        Brak pozycji spełniających kryteria.
-      </div>
-
-      <div id="loader" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div class="h-64 rounded-2xl skeleton"></div>
-        <div class="h-64 rounded-2xl skeleton"></div>
-        <div class="h-64 rounded-2xl skeleton"></div>
-        <div class="h-64 rounded-2xl skeleton"></div>
+<!-- KONTAKT -->
+<section id="kontakt" class="section-tight">
+  <div class="container grid two">
+    <div class="card contact-card">
+      <h2>Kontakt & lokalizacja</h2>
+      <p><strong>Adres:</strong> ul. Kościuszki 32/3, Białystok (Centrum)</p>
+      <p><strong>Godziny:</strong> codziennie 11:00–02:00</p>
+      <p><strong>Telefon: </strong> <a class="btn btn-cta" href="tel:+48669990099">+48 669 990 099</a></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <a class="btn" href="https://pyszne.pl" rel="noopener">Zamów teraz</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener"
+           href="https://maps.app.goo.gl/vCMom3WEL8rpvWED9">Wyznacz trasę</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="https://www.facebook.com/kebabkingbstok">Facebook</a>
       </div>
     </div>
-  </section>
+<div class="map card">
+ <div class="map card">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d598.4353538631657!2d23.15710606968709!3d53.1327873028769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ffd137d3144dd%3A0xfedb4ce0509f5f3a!2sKebab%20z%20Tendoora!5e0!3m2!1spl!2spl!4v1763063673970!5m2!1spl!2spl"
+    style="border:0; width:100%; height:100%; min-height:280px;"
+    allowfullscreen=""
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</div>
 
-  <!-- Kontakt -->
-  <section id="kontakt" class="py-16 bg-slate-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-4xl font-extrabold">Skontaktuj się z nami</h2>
-      <p class="mt-3 text-slate-300">Zadzwoń lub napisz – przygotujemy ofertę pod Twój zespół.</p>
-      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="mailto:zwariowanygarmaz123@gmail.com" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold shadow-soft">zwariowanygarmaz123@gmail.com</a>
-        <a href="tel:+48511393523" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 font-semibold">+48 511 393 523</a>
-      </div>
-      <p class="mt-8 text-slate-400">ul. Orzechowa 5 80-175 Gdańsk</p>
-    </div>
-  </section>
+</div>
+  </div>
+</section>
 
-  <footer class="py-8 text-center text-slate-500 text-sm">
-    © 2025 Zwariowany Garmaż
-  </footer>
+<footer class="footer section-tight">
+  <div class="container">
+    <div>© 2025 Król Kebab z Tendoora · Białystok</div>
+    <nav style="display:flex;gap:14px;flex-wrap:wrap">
+      <a href="#o-nas">O nas</a>
+      <a href="/menu.html">Oferta</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href="/polityka-prywatnosci.html">Polityka prywatności</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
-  // === 1) KONFIGURACJA ===
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7s70xH32hvGyf81asg-gKRZkl7N9xUG_B_f74CVLX1uWzVF424Gvmm8Wa-V7LHwfQIIu0LCTtEJ-8/pub?gid=0&single=true&output=csv";
+  // Topbar pojawia się, gdy hero zniknie z widoku
+  const topbar = document.getElementById('topbar');
+  const hero = document.getElementById('start');
+  const obs = new IntersectionObserver(([e])=>{
+    topbar.classList.toggle('stuck', !e.isIntersecting);
+  }, {threshold:0.15});
+  obs.observe(hero);
 
-  // mapowanie nazw kolumn
-  const MAP = {
-    name:     ["nazwa","produkt","danie","pozycja","produkt "],
-    price:    ["cena","cena/kg","cena brutto","cena netto"],
-    category: ["kategoria","typ","segment"],
-    desc:     ["opis","opis dania","sklad","skład"],
-    image:    ["zdjęcie","zdjecie","image","img","foto","obraz"],
-    unit:     ["jednostka","jm","/kg","/szt","za","l","/l","litr"]
-  };
-
-  // === 2) UTYLITIES ===
-  const lc = s => (s || "").toString().trim().toLowerCase();
-
-  // poprawione formatowanie ceny
-  function money(v){
-    const raw = (v ?? "").toString();
-    const num = parseFloat(raw.replace(/\s/g,"").replace(',', '.').replace(/[^\d.\-]/g,''));
-    return Number.isFinite(num)
-      ? num.toLocaleString("pl-PL",{minimumFractionDigits:2,maximumFractionDigits:2})
-      : raw;
-  }
-
-  // poprawione formatowanie jednostki
-  function formatUnit(uRaw){
-    const u = (uRaw || "").toString().trim();
-    if (!u) return "";
-    const norm = u.replace(/\s+/g," ").replace('.',',');
-
-    // jeżeli zawiera cyfrę (np. "0,5 kg", "500 ml", "8 szt")
-    if (/\d/.test(norm)) return " / " + norm;
-
-    const key = norm.toLowerCase();
-    const map = {
-      "kg":"kg","/kg":"kg",
-      "szt":"szt","/szt":"szt",
-      "porcja":"porcja",
-      "l":"L","/l":"L","litr":"L","litra":"L","litrów":"L"
-    };
-    return " / " + (map[key] || norm);
-  }
-
-  // CSV parser
-  function parseCSV(text){
-    const rows=[]; let cur=[]; let cell=""; let q=false;
-    for (let i=0;i<text.length;i++){
-      const c=text[i], n=text[i+1];
-      if (q){
-        if (c==='"' && n==='"'){ cell+='"'; i++; }
-        else if (c=== '"'){ q=false; }
-        else { cell+=c; }
-      } else {
-        if (c === '"'){ q=true; }
-        else if (c === ','){ cur.push(cell); cell=""; }
-        else if (c === '\n'){ cur.push(cell); rows.push(cur); cur=[]; cell=""; }
-        else if (c === '\r'){ /* ignore */ }
-        else { cell += c; }
+  // Płynne przewijanie
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const id=a.getAttribute('href');
+      if(id.length>1){
+        const el=document.querySelector(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); history.pushState(null,'',id); }
       }
-    }
-    if (cell.length || cur.length) { cur.push(cell); rows.push(cur); }
-    return rows;
-  }
-
-  function normalizeRows(headers, rows){
-    const hl = headers.map(h => lc(h));
-    const cellAt = (row, i) => Array.isArray(row) ? (row[i] ?? "") : (row[headers[i]] ?? "");
-    function pick(mapKeys, row){
-      for (let i=0;i<hl.length;i++){
-        if (MAP && MAP.name && lc(hl[i]) === lc(mapKeys)) return cellAt(row,i);
-        if (mapKeys.includes(hl[i])) return cellAt(row,i);
-      }
-      return "";
-    }
-
-    let items = rows.map(r => ({
-      name:     pick(MAP.name, r)     || cellAt(r,0),
-      price:    pick(MAP.price, r)    || cellAt(r,1),
-      category: pick(MAP.category, r) || "Menu",
-      desc:     pick(MAP.desc, r)     || cellAt(r,3),
-      image:    pick(MAP.image, r)    || cellAt(r,4),
-      unit:     pick(MAP.unit, r)     || cellAt(r,2) || "zł"
-    }));
-
-    return items.map(it => ({
-      name: (it.name ?? "").toString(),
-      price: (it.price ?? "").toString(),
-      category: it.category || "Menu",
-      desc: it.desc || "",
-      image: it.image || "",
-      unit: it.unit || "zł"
-    })).filter(x => x.name || x.price || x.desc);
-  }
-
-  function renderCats(items){
-    const cats = Array.from(new Set(items.map(i => i.category).filter(Boolean)));
-    const bar = document.getElementById("cats");
-    bar.innerHTML = "";
-    const mkBtn = (label) => {
-      const a = document.createElement("button");
-      a.className = "px-3 py-1.5 rounded-full border text-sm hover:border-blue-500 hover:text-blue-600";
-      a.dataset.cat = label;
-      a.textContent = label;
-      return a;
-    };
-    bar.appendChild(mkBtn("Wszystko"));
-    cats.forEach(c => bar.appendChild(mkBtn(c)));
-  }
-
-  function renderGrid(items){
-    const wrap = document.getElementById("grid");
-    const empty = document.getElementById("empty");
-    wrap.innerHTML = "";
-    if (!items.length){ empty.classList.remove("hidden"); return; }
-    empty.classList.add("hidden");
-
-    items.forEach(it => {
-      const card = document.createElement("article");
-      card.className = "bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden flex flex-col";
-      const imgWrap = document.createElement("div");
-      imgWrap.className = "h-40 bg-slate-100";
-      if (it.image){
-        const img = document.createElement("img");
-        img.src = it.image; img.alt = it.name;
-        img.className = "w-full h-40 object-cover";
-        imgWrap.appendChild(img);
-      } else {
-        imgWrap.innerHTML = '<div class="w-full h-40 grid place-items-center text-slate-400">Zdjęcie</div>';
-      }
-      card.appendChild(imgWrap);
-
-      const body = document.createElement("div");
-      body.className = "p-4 flex flex-col gap-2 grow";
-      const cat = document.createElement("span");
-      cat.className = "inline-block text-xs px-2 py-1 bg-slate-100 rounded-full w-fit";
-      cat.textContent = it.category || "Menu";
-      body.appendChild(cat);
-
-      const h3 = document.createElement("h3");
-      h3.className = "text-lg font-bold";
-      h3.textContent = it.name || "Pozycja";
-      body.appendChild(h3);
-
-      if (it.desc){
-        const p = document.createElement("p");
-        p.className = "text-sm text-slate-600 line-clamp-3";
-        p.textContent = it.desc;
-        body.appendChild(p);
-      }
-
-      const foot = document.createElement("div");
-      foot.className = "mt-auto pt-2 flex items-baseline justify-between";
-
-      const price = document.createElement("div");
-      price.className = "text-2xl font-extrabold text-blue-600";
-      if(it.price){
-        price.innerHTML = `<span>${money(it.price)} zł</span><span class="text-sm text-slate-500">${formatUnit(it.unit)}</span>`;
-      } else {
-        price.textContent = "—";
-      }
-      foot.appendChild(price);
-
-      const btn = document.createElement("button");
-      btn.className = "text-sm px-3 py-2 rounded-xl border border-slate-300 hover:border-blue-500 hover:text-blue-600";
-      btn.textContent = "Zapytaj o ofertę";
-      btn.addEventListener("click", () => location.hash = "#kontakt");
-      foot.appendChild(btn);
-      body.appendChild(foot);
-
-      card.appendChild(body);
-      wrap.appendChild(card);
     });
-  }
-
-  function setupFilters(allItems){
-    const search = document.getElementById("search");
-    const cats = document.getElementById("cats");
-
-    function apply(){
-      const q = (search.value || "").toLowerCase();
-      const activeCatBtn = cats.querySelector("button.active");
-      const cat = activeCatBtn ? activeCatBtn.dataset.cat : "Wszystko";
-      const filtered = allItems.filter(i => {
-        const inCat = cat === "Wszystko" || (i.category||"").toLowerCase() === cat.toLowerCase();
-        const inText = !q || [i.name, i.desc, i.category].some(x => (x||"").toLowerCase().includes(q));
-        return inCat && inText;
-      });
-      renderGrid(filtered);
-    }
-
-    cats.addEventListener("click", (e) => {
-      if (e.target.tagName !== "BUTTON") return;
-      cats.querySelectorAll("button").forEach(b => b.classList.remove("active","border-blue-500","text-blue-600","bg-blue-50"));
-      e.target.classList.add("active","border-blue-500","text-blue-600","bg-blue-50");
-      apply();
-    });
-    search.addEventListener("input", apply);
-
-    const first = cats.querySelector("button");
-    if (first){ first.classList.add("active","border-blue-500","text-blue-600","bg-blue-50"); }
-    apply();
-  }
-
-  // === 3) START ===
-  (async function init(){
-    const loader = document.getElementById("loader");
-    const empty  = document.getElementById("empty");
-
-    const fetchWithTimeout = async (url, t=12000) => {
-      const ctrl = new AbortController();
-      const id = setTimeout(() => ctrl.abort("timeout"), t);
-      try {
-        return await fetch(url, { cache: "no-store", signal: ctrl.signal });
-      } finally {
-        clearTimeout(id);
-      }
-    };
-
-    try {
-      const res = await fetchWithTimeout(CSV_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      const text = await res.text();
-
-      const rows = parseCSV(text).filter(r => r.length && r.join("").trim() !== "");
-      const headers = rows.shift() || [];
-      const items = normalizeRows(headers, rows);
-
-      if (!items.length) {
-        document.getElementById("grid").innerHTML = "";
-        empty.classList.remove("hidden");
-        empty.textContent = "Brak pozycji do wyświetlenia. Odczytane nagłówki: " + headers.join(", ");
-        return;
-      }
-
-      renderCats(items);
-      setupFilters(items);
-    } catch (err) {
-      console.error("Błąd ładowania danych:", err);
-      document.getElementById("loader").innerHTML =
-        '<div class="col-span-full text-center text-slate-500">Nie udało się pobrać CSV (sieć/CORS/timeout). Sprawdź publikację lub odśwież stronę.</div>';
-    } finally {
-      loader.classList.add("hidden");
-    }
-  })();
+  });
 </script>
-
-<!-- FB Floating Button -->
-<a href="https://www.facebook.com/zwariowanygarmaz123gmail"
-   onclick="window.open(this.href, 'popupfb', 'width=800,height=600'); return false;"
-   class="fixed top-1/2 right-0 -translate-y-1/2 bg-blue-600 text-white p-4 rounded-l-xl shadow-lg hover:bg-blue-700 z-50"
-   title="Odwiedź nas na Facebooku">
-  <!-- Ikona Facebooka -->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10">
-    <path d="M22 12a10 10 0 10-11.5 9.9v-7h-2v-2.9h2v-2.2c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2v2h2.3l-.4 2.9h-1.9v7A10 10 0 0022 12z"/>
-  </svg>
-</a>
-
 </body>
 </html>
